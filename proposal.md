@@ -1,5 +1,11 @@
 # Proposal - Mental Health Shiny Application
 
+
+### Team Members | Github:
+* Fan Nie | [Jamienie](https://github.com/Jamienie?tab=repositories)
+* Aaron Quinton | [aaronquinton](https://github.com/aaronquinton)
+
+
 ## Overview
 The tech sector is built on bright minds developing new solutions to create social and economic impact. Like many industries, the talent is the people. With this in mind, it is important to consider the well being and mental health of all employees to foster a great working environment.  We propose building a data visualization application to illustrate the attitudes around mental health, what companies are doing about it, and how this relates to the well being of the employees. Using this tool An HR manager can get a better understanding of theses attitudes for their company and act accordingly. By filtering the company benefits or the employee backgrounds the user can also learn what company tools are most beneficial and can tailor it to their employees.
 
