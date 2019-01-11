@@ -12,4 +12,4 @@ Heather works for a technology company as an HR manager. She is tasked to monito
 ## Description and Design of the Application
 The app contains a landing page that shows a 2 dimensional bin plot of the dataset features coloured coded according to the ranking/probability of each feature. An example could be having the attitudes on the y axis with the company tools on the x axis. From 3 dropdown list (background, attitude questions and company tools), users can select visualizations that provide the most meaningful insights to their use case. A sketch is illustrated below:
 
-![]("proposal_app_sketch.png")
+![](proposal_app_sketch.png)
