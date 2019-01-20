@@ -1,9 +1,20 @@
+# app.R
+# Fan and Aaron, January 2019
+
+# This script read the shiny app script. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/library(rsconnect)
+deployApp()
+
 library(tidyverse)
 library(shiny)
 library(scales)
 library(plotly)
 
-df <- read_csv("data/clean_survey.csv")
+df <- read_csv("../data/clean_survey.csv")
 
 df <- mutate_at(df, vars(Gender:obs_consequence), funs(factor(.))) %>% 
   mutate_at(vars(work_interfere), 
