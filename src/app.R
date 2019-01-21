@@ -1,0 +1,124 @@
+library(tidyverse)
+library(shiny)
+library(scales)
+library(plotly)
+
+# Load tidy survey data after gender and age values have been fixed
+df <- read_csv("../data/clean_survey.csv")
+
+# Factorize the survey responses in an order consistent with negative to positive attitudes towards mental health
+df <- df %>% 
+  mutate_at(vars(Gender:obs_consequence), funs(factor(.))) %>% 
+  mutate_at(vars(work_interfere), 
+            funs(fct_relevel(., c("Never", "Rarely", "Sometimes", "Often")))) %>% 
+  mutate_at(vars(no_employees), 
+            funs(fct_relevel(.,c("1-5", "6-25", "26-100", "100-500", "500-1000")))) %>% 
+  mutate_at(vars(leave), 
+            funs(fct_relevel(.,c("Don't know", "Very easy", "Somewhat easy", "Somewhat difficult", "Very difficult")))) %>% 
+  mutate_at(vars(mental_health_consequence, phys_health_consequence),
+            funs(fct_relevel(., c("Yes","Maybe","No")))) %>% 
+  mutate_at(vars(coworkers, supervisor),
+            funs(fct_relevel(., c("No","Some of them","Yes")))) %>% 
+  mutate_at(vars(mental_health_interview, phys_health_interview),
+            funs(fct_relevel(., c("No","Maybe","Yes")))) %>% 
+  mutate_at(vars(mental_vs_physical),
+            funs(fct_relevel(., c("No","Don't know","Yes")))) %>% 
+  mutate_at(vars(obs_consequence),
+            funs(fct_relevel(., c("Yes","No")))) 
+
+# Organize column names by general grouping and label with human readable names 
+col_backround_info <- colnames(df)[1:12]
+
+col_employer_policies <-c("Do they provide mental health benefits?" = "benefits", 
+                          "Is there available info on care options" = "care_options", 
+                          "Have they discussed mental health as part of a wellness program?" = "wellness_program",
+                          "Are there resources on how to seek help?" = "seek_help",
+                          "Is anonymity protected if using resources?" = "anonymity",
+                          "How easy is it to take leave for mental health?" = "leave")
+
+col_attitudes <- c("1. Mental Health Consequence" =  "mental_health_consequence",
+                   "2. Physical Health Consequene" = "phys_health_consequence",
+                   "3. Talk with Coworkers" = "coworkers",
+                   "4. Talk with Supervisor" = "supervisor",
+                   "5. Discuss Mental Health at Interview" = "mental_health_interview",
+                   "6. Discuss Physical Health at Interview" = "phys_health_interview",
+                   "7. Mental vs Physical Health" = "mental_vs_physical",
+                   "8. Observed consequences" = "obs_consequence")
+
+
+# Collect and scale mental health attiude columns
+df_attitudes <- df %>% 
+  select(col_attitudes) %>% 
+  mutate_all(funs(as.numeric(.))) %>% 
+  mutate_all(funs(rescale(.)))
+
+
+## Build Shiny App
+
+# UI
+ui <- fluidPage(
+  
+  
+  fluidRow(
+    column(width = 12,
+           selectInput(inputId = "r1",
+                       label = "Employer Policy Survey Questions",
+                       choices = col_employer_policies,
+                       selected = "benefits")
+    ),
+    
+    
+    
+    column(width = 12, 
+           plotlyOutput("scatterpolar")
+    )
+    
+    
+  )
+)
+
+
+# Server
+server <- function(input, output){
+  output$scatterpolar <- renderPlotly({
+    
+    avg_results <- df_attitudes %>% 
+      cbind(foo = df[[input$r1]]) %>% 
+      group_by(foo) %>% 
+      summarise_all(funs(mean(., na.rm = TRUE))) %>% 
+      gather(-foo, key = "Survey_Questions", value = "Mean_response") %>% 
+      spread(foo, Mean_response)
+    
+    p <- plot_ly(
+      type = 'scatterpolar',
+      mode = "markers",
+      fill = "toself",
+      alpha = 0.4,
+      colors = "Blues"
+      
+    )
+    
+    for(i in seq_along(avg_results)[-1]){
+      p <- p %>% add_trace(
+        r = avg_results %>% pull(i),
+        theta = avg_results %>% pull(Survey_Questions),
+        name = colnames(avg_results)[i]
+      )
+    }
+    
+    p %>%
+      layout(
+        polar = list(
+          radialaxis = list(
+            visible = F,
+            range = c(0,1)
+          )
+        )
+      )
+    
+  })
+  
+}
+
+
+shinyApp(ui, server)
