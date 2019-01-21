@@ -1,3 +1,14 @@
+# app.R
+# Fan and Aaron, January 2019
+
+# This script read the shiny app script. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/library(rsconnect)
+
+
 library(tidyverse)
 library(shiny)
 library(scales)
@@ -30,11 +41,11 @@ df <- df %>%
 col_backround_info <- colnames(df)[1:12]
 
 col_employer_policies <-c("Do they provide mental health benefits?" = "benefits", 
-                         "Is there available info on care options" = "care_options", 
-                         "Have they discussed mental health as part of a wellness program?" = "wellness_program",
-                         "Are there resources on how to seek help?" = "seek_help",
-                         "Is anonymity protected if using resources?" = "anonymity",
-                         "How easy is it to take leave for mental health?" = "leave")
+                          "Is there available info on care options" = "care_options", 
+                          "Have they discussed mental health as part of a wellness program?" = "wellness_program",
+                          "Are there resources on how to seek help?" = "seek_help",
+                          "Is anonymity protected if using resources?" = "anonymity",
+                          "How easy is it to take leave for mental health?" = "leave")
 
 col_attitudes <- c("1. Mental Health Consequence" =  "mental_health_consequence",
                    "2. Physical Health Consequene" = "phys_health_consequence",
@@ -61,16 +72,16 @@ ui <- fluidPage(
   
   fluidRow(
     column(width = 12,
-      selectInput(inputId = "r1",
-                  label = "Employer Policy Survey Questions",
-                  choices = col_employer_policies,
-                  selected = "benefits")
+           selectInput(inputId = "r1",
+                       label = "Employer Policy Survey Questions",
+                       choices = col_employer_policies,
+                       selected = "benefits")
     ),
     
     
     
     column(width = 12, 
-      plotlyOutput("scatterpolar")
+           plotlyOutput("scatterpolar")
     )
     
     
@@ -97,16 +108,16 @@ server <- function(input, output){
       colors = "Blues"
       
     )
-      
-      for(i in seq_along(avg_results)[-1]){
-        p <- p %>% add_trace(
-                    r = avg_results %>% pull(i),
-                    theta = avg_results %>% pull(Survey_Questions),
-                    name = colnames(avg_results)[i]
-                    )
-        }
-      
-      p %>%
+    
+    for(i in seq_along(avg_results)[-1]){
+      p <- p %>% add_trace(
+        r = avg_results %>% pull(i),
+        theta = avg_results %>% pull(Survey_Questions),
+        name = colnames(avg_results)[i]
+      )
+    }
+    
+    p %>%
       layout(
         polar = list(
           radialaxis = list(
