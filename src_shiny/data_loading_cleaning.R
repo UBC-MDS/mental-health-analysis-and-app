@@ -8,6 +8,7 @@
 # Usage: Rscript src/data_loading_cleaning.R  data/survey.csv data/clean_survey.csv
 #
 
+
 suppressPackageStartupMessages(library(tidyverse))
 library(forcats)
 
@@ -38,15 +39,6 @@ main <- function(){
   
   # Remove rows with odd age values
   df <- df %>% filter(Age < 100 & Age > 18)
-  
-  
-  # Convert apropriate columns to factors and order correctly
-  df <- mutate_at(df, vars(Gender:obs_consequence), funs(factor(.))) %>% 
-    mutate_at(vars(work_interfere), funs(fct_relevel(., c("Never", "Rarely", "Sometimes", "Often")))) %>% 
-    mutate_at(vars(no_employees), funs(fct_relevel(.,c("1-5", "6-25", "26-100", "100-500", "500-1000")))) %>% 
-    mutate_at(vars(matches("consequence|interview"), -obs_consequence), funs(fct_relevel(.,c("No", "Maybe", "Yes")))) %>% 
-    mutate_at(vars(leave), funs(fct_relevel(.,c("Don't know", "Very easy", "Somewhat easy", "Somewhat difficult", "Very difficult"))))
-  
   
   
   # write clean data file
