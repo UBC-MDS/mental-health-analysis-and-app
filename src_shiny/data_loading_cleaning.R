@@ -5,7 +5,7 @@
 #
 # This script takes two arguments: the path to the input file , and a path where to write the file to. 
 #
-# Usage: Rscript src/data_loading_cleaning.R  data/survey.csv data/clean_survey.csv
+# Usage: Rscript src/data_loading_cleaning.R  data/survey.csv src/clean_survey.csv
 #
 
 
