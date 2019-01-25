@@ -15,7 +15,7 @@ library(scales)
 library(plotly)
 
 # Load tidy survey data after gender and age values have been fixed
-df <- read_csv("../data/clean_survey.csv")
+df <- read_csv("clean_survey.csv")
 
 # Factorize the survey responses in an order consistent with negative to positive attitudes towards mental health
 df <- df %>% 
