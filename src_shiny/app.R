@@ -13,6 +13,11 @@ library(tidyverse)
 library(shiny)
 library(scales)
 library(plotly)
+library(shinythemes)
+
+library(shinyWidgets)
+library(shinyhelper)
+
 
 # Load tidy survey data after gender and age values have been fixed
 df <- read_csv("clean_survey.csv")
@@ -40,10 +45,10 @@ df <- df %>%
 # Organize column names by general grouping and label with human readable names 
 col_backround_info <- colnames(df)[1:12]
 
-col_employer_policies <-c("Do they provide mental health benefits?" = "benefits", 
+col_employer_policies <-c("Does employer provide mental health benefits?" = "benefits", 
                           "Is there available info on care options" = "care_options", 
-                          "Have they discussed mental health as part of a wellness program?" = "wellness_program",
-                          "Are there resources on how to seek help?" = "seek_help",
+                          "Has employer discussed mental health as part of a wellness program?" = "wellness_program",
+                          "Are there employer provided resources on how to seek help?" = "seek_help",
                           "Is anonymity protected if using resources?" = "anonymity",
                           "How easy is it to take leave for mental health?" = "leave")
 
@@ -69,28 +74,58 @@ df_attitudes <- df %>%
 # UI
 ui <- fluidPage(
   
+
   
-  fluidRow(
-    column(width = 12,
-           selectInput(inputId = "r1",
-                       label = "Employer Policy Survey Questions",
-                       choices = col_employer_policies,
-                       selected = "benefits")
-    ),
+  theme = shinytheme("darkly"),
+  titlePanel("Does Employer Policy Effect Employee's Attitude Towards Mental Health?",
+             windowTitle = "Employer Policy vs Mental Health Attitude"),
+  sidebarLayout(
+                sidebarPanel(
+                  
+                  tags$head(tags$style(type="text/css", 
+                                       ".test_type {color: red;
+                           font-size: 20px; 
+                           font-style: italic;}"
+                  )
+                  ),
+                  
+                      selectInput(inputId = "r1",
+                              label = "Employer Policy Survey Questions on Attitude towards Mental Health",
+                              choices = col_employer_policies,
+                              selected = "benefits"),
+                       br(),            
+                                   
+                      prettyRadioButtons(inputId = "radio1",
+                                   label = "Click me!",
+                                   choices = c("Click me !", "Me !", "Or me !")),
+                                   verbatimTextOutput(outputId = "res1"),
+                      
+                       hr(),
+                      helpText("click the ? on the right top corner of the webpage for detailed explations of the plot")
+                              
+
+
+                   ),
+                
+                    
+                mainPanel(
+                    tabsetPanel(type = "tabs",
+                            tabPanel("Read Me", br(),includeMarkdown("readme.md")),
+                            
+                            tabPanel("Plot", plotlyOutput("scatterpolar")%>%
+                                       helper(size = "l", 
+                                              content = "PlotHelp")))
+                )
     
-    
-    
-    column(width = 12, 
-           plotlyOutput("scatterpolar")
-    )
-    
-    
-  )
+   )
 )
 
-
+ 
 # Server
 server <- function(input, output){
+  
+  observe_helpers()
+  
   output$scatterpolar <- renderPlotly({
     
     avg_results <- df_attitudes %>% 
@@ -127,9 +162,10 @@ server <- function(input, output){
         )
       )
     
-  })
+    })
   
+  
+ 
 }
-
 
 shinyApp(ui, server)
