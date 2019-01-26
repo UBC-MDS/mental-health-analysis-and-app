@@ -5,6 +5,6 @@ account: my-data-science
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 656535
-bundleId: 1827966
+bundleId: 1837838
 url: https://my-data-science.shinyapps.io/src_shiny/
-when: 1548115374.70782
+when: 1548468190.61656
