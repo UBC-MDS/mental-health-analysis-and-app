@@ -95,10 +95,10 @@ ui <- fluidPage(
                               selected = "benefits"),
                        br(),            
                                    
-                      prettyRadioButtons(inputId = "radio1",
-                                   label = "Click me!",
-                                   choices = c("Click me !", "Me !", "Or me !")),
-                                   verbatimTextOutput(outputId = "res1"),
+                     # prettyRadioButtons(inputId = "radio1",
+                      #             label = "Click me!",
+                       #            choices = c("Click me !", "Me !", "Or me !")),
+                        #           verbatimTextOutput(outputId = "res1"),
                       
                        hr(),
                       helpText("click the ? on the right top corner of the webpage for detailed explations of the plot")
