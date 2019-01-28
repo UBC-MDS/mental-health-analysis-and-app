@@ -7,4 +7,4 @@ Analysis via shiny app in R investigating the attitudes towards mental health di
 - Wine_Visualization_and_Analysis https://github.com/UBC-MDS/Wine_Visualization_and_Analysis_Phuntsok_Jessie/issues/14
 
 #### ShinyApp.io
-- https://www.shinyapps.io/admin/#/application/656535
+- https://my-data-science.shinyapps.io/src_shiny/
