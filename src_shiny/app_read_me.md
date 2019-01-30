@@ -1,12 +1,9 @@
-###Mental Health Shiny Application
-
 #### Team Members | Github:
 * Fan Nie | [Jamienie](https://github.com/Jamienie?tab=repositories)
 * Aaron Quinton | [aaronquinton](https://github.com/aaronquinton)
 
 #### Functionality
-Our shiny application includes a landing page with an interactive radar plot and a drop down list dictating the contents to be plotted. This is illustrated with the following screenshots. The interpretation of the variables and and plot is discussed under the Rational subheading.
-
+Our shiny application includes a landing page with an interactive radar plot and a drop down list dictating the contents to be plotted. 
 
 #### Interpretation
 The radar plot identifies the eight survey questions in our raw data that all pertained to the employee's attitude towards mental health. All of these survey responses were categorical, but with an inherit order (ex. No, Maybe, Yes). These were assigned a number and scaled to be between Zero and One. A zero implies their answer to the survey question indicated a negative attitude, while a 1 indicated their attitude is positive. These scores were then averaged across all the employees with consideration to their company's policies.
