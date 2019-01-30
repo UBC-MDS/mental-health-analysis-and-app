@@ -13,8 +13,8 @@ library(tidyverse)
 library(shiny)
 library(scales)
 library(plotly)
-library(shinythemes)
 
+library(shinythemes)
 library(shinyWidgets)
 library(shinyhelper)
 
@@ -45,28 +45,38 @@ df <- df %>%
 # Organize column names by general grouping and label with human readable names 
 col_backround_info <- colnames(df)[1:12]
 
+col_attitudes <- c("mental_health_consequence", "phys_health_consequence",
+                   "coworkers", "supervisor","mental_health_interview",
+                   "phys_health_interview", "mental_vs_physical",
+                   "obs_consequence")
+
 col_employer_policies <-c("Does employer provide mental health benefits?" = "benefits", 
-                          "Is there available info on care options" = "care_options", 
-                          "Has employer discussed mental health as part of a wellness program?" = "wellness_program",
-                          "Are there employer provided resources on how to seek help?" = "seek_help",
-                          "Is anonymity protected if using resources?" = "anonymity",
-                          "How easy is it to take leave for mental health?" = "leave")
+                                 "Is there available info on care options" = "care_options", 
+                                 "Has employer discussed mental health as part of a wellness program?" = "wellness_program",
+                                 "Are there employer provided resources on how to seek help?" = "seek_help",
+                                 "Is anonymity protected if using resources?" = "anonymity",
+                                 "How easy is it to take leave for mental health?" = "leave")
 
-col_attitudes <- c("1. Mental Health Consequence" =  "mental_health_consequence",
-                   "2. Physical Health Consequene" = "phys_health_consequence",
-                   "3. Talk with Coworkers" = "coworkers",
-                   "4. Talk with Supervisor" = "supervisor",
-                   "5. Discuss Mental Health at Interview" = "mental_health_interview",
-                   "6. Discuss Physical Health at Interview" = "phys_health_interview",
-                   "7. Mental vs Physical Health" = "mental_vs_physical",
-                   "8. Observed consequences" = "obs_consequence")
+col_attitudes_labels <- c("Q1. Mental Health Consequence",
+                          "Q2. Physical Health Consequence",
+                          "Q3. Talk with Coworkers", "Q4. Talk with Supervisor",
+                          "Q5. Mental Health at Interview",
+                          "Q6. Physical Health at Interview", 
+                          "Q7. Mental vs Physical Health",
+                          "Q8. Observed consequences")
 
+name_change <- tibble(old_survey_q = col_attitudes, new_survey_q = col_attitudes_labels)
 
-# Collect and scale mental health attiude columns
-df_attitudes <- df %>% 
-  select(col_attitudes) %>% 
-  mutate_all(funs(as.numeric(.))) %>% 
-  mutate_all(funs(rescale(.)))
+# Describe and format mental health survey questions to be used in the hovertext
+question_text <- 
+  c("<br>Q1. Mental Health Consequence:<br>  Do you think that discussing a<br> mental health issue with your<br> employer would have negative<br> consequences?",
+    "<br>Q2. Physical Health Consequence:<br>  Do you think that discussing a<br> physical health issue with your<br> employer would have negative<br> consequences?",
+    "<br>Q3. Talk with Coworkers:<br>  Would you be willing to discuss<br> a mental health issue with your<br> coworkers?",
+    "<br>Q4. Talk with Supervisor:<br>  Would you be willing to discuss<br> a mental health issue with your<br> direct supervisor(s)?",
+    "<br>Q5. Mental Health at Interview:<br>  Would you bring up a mental health<br> issue with a potential employer<br> in an interview?",
+    "<br>Q6. Physical Health at Interview:<br>  Would you bring up a physical health<br> issue with a potential employer in an<br> interview?",
+    "<br>Q7. Mental vs Physical Health:<br>  Do you feel that your employer<br> takes mental health as seriously<br> as physical health?",
+    "<br>Q8. Observed consequences:<br>  Have you heard of or observed<br> negative consequences for<br> coworkers with mental health<br> conditions in your workplace?")
 
 
 ## Build Shiny App
@@ -74,49 +84,38 @@ df_attitudes <- df %>%
 # UI
 ui <- fluidPage(
   
-
-  
-  theme = shinytheme("darkly"),
-  titlePanel("Does Employer Policy Effect Employee's Attitude Towards Mental Health?",
+  theme = shinytheme("journal"),
+  titlePanel("Do Employer Policies Effect Overall Employee Attitudes Towards Mental Health?",
              windowTitle = "Employer Policy vs Mental Health Attitude"),
+  
+  h4("Instructions"),
+  
+  h6("The dashboard visualizes survey results on employees attitudes to mental health. Employees were grouped based on how they answered their employer policy questions which can be toggled below. Each group of employees were aggregated to get an overall score on how positive their attitude was towards mental health based on the specific questions that were asked. The overall area of the plot gives insight into the overall positive attitude. With this insight you can compare different employees by policy group to see which policies made the biggest difference. For example, employers who make it very easy to take a leave of abscence tend to have employees with a significantly more positive atitude towards mental health. For more specific information, see the Read me tab located below."),
+  
   sidebarLayout(
                 sidebarPanel(
                   
                   tags$head(tags$style(type="text/css", 
                                        ".test_type {color: red;
                            font-size: 20px; 
-                           font-style: italic;}"
-                  )
+                           font-style: italic;}")
                   ),
                   
-                      selectInput(inputId = "r1",
-                              label = "Employer Policy Survey Questions on Attitude towards Mental Health",
+                      selectInput(inputId = "employer_q",
+                              label = "Employer Policy Survey Questions",
                               choices = col_employer_policies,
                               selected = "benefits"),
-                       br(),            
-                                   
-                     # prettyRadioButtons(inputId = "radio1",
-                      #             label = "Click me!",
-                       #            choices = c("Click me !", "Me !", "Or me !")),
-                        #           verbatimTextOutput(outputId = "res1"),
-                      
-                       hr(),
-                      helpText("click the ? on the right top corner of the webpage for detailed explations of the plot")
-                              
+                  
+                       uiOutput("secondSelection")
+                  ),
 
-
-                   ),
-                
-                    
                 mainPanel(
                     tabsetPanel(type = "tabs",
-                            tabPanel("Read Me", br(),includeMarkdown("readme.md")),
+                                tabPanel("Plot", plotlyOutput("scatterpolar")),
+                                tabPanel("Read Me", br(),includeMarkdown("readme.md"))
+                    )
                             
-                            tabPanel("Plot", plotlyOutput("scatterpolar")%>%
-                                       helper(size = "l", 
-                                              content = "PlotHelp")))
                 )
-    
    )
 )
 
@@ -124,35 +123,54 @@ ui <- fluidPage(
 # Server
 server <- function(input, output){
   
-  observe_helpers()
+  output$secondSelection <- renderUI({
+    checkboxGroupInput(inputId = "employer_q_options_var", 
+                       label = NULL, 
+                       choices = df[[input$employer_q]] %>% unique(), 
+                       selected = df[[input$employer_q]] %>% unique())
+  })
+  
+  
+  df_summary <- reactive({
+    df %>% 
+      mutate_at(col_attitudes, funs(as.numeric(.))) %>% 
+      mutate_at(col_attitudes, funs(rescale(.))) %>% 
+      select(col_attitudes,foo = input$employer_q) %>% 
+      group_by(foo) %>% 
+      summarize_all(funs(mean(., na.rm = TRUE))) %>% 
+      gather(-foo, key = "Survey_Questions", value = "Mean_response") %>% 
+      filter(foo %in% input$employer_q_options_var) %>% 
+      left_join(name_change, by = c("Survey_Questions" = "old_survey_q"))
+   })
+   
+  employer_q_options <- reactive({
+    df_summary() %>%
+      pull(foo) %>% 
+      unique()
+   })
+  
+  hovertext <- reactive({
+    paste(flatten_chr(map(question_text, rep, times = length(input$employer_q_options_var))), 
+          "<br><br>Average Positivity Score:", 
+          df_summary() %>% pull(Mean_response) %>% round(2))
+  })
+    
+    
+  
+  
+  
   
   output$scatterpolar <- renderPlotly({
     
-    avg_results <- df_attitudes %>% 
-      cbind(foo = df[[input$r1]]) %>% 
-      group_by(foo) %>% 
-      summarise_all(funs(mean(., na.rm = TRUE))) %>% 
-      gather(-foo, key = "Survey_Questions", value = "Mean_response") %>% 
-      spread(foo, Mean_response)
+    req(input$employer_q)
     
     p <- plot_ly(
       type = 'scatterpolar',
       mode = "markers",
       fill = "toself",
       alpha = 0.4,
-      colors = "Blues"
+      colors = "Paired") %>%
       
-    )
-    
-    for(i in seq_along(avg_results)[-1]){
-      p <- p %>% add_trace(
-        r = avg_results %>% pull(i),
-        theta = avg_results %>% pull(Survey_Questions),
-        name = colnames(avg_results)[i]
-      )
-    }
-    
-    p %>%
       layout(
         polar = list(
           radialaxis = list(
@@ -160,8 +178,14 @@ server <- function(input, output){
             range = c(0,1)
           )
         )
-      )
+      )  
     
+    p <- df_summary() %>% 
+            add_trace(p, data = ., theta = ~new_survey_q, r = ~Mean_response, color = ~foo, 
+                      hoverinfo = "text", hovertext = hovertext(), marker = list(size = 7))
+    
+    
+    p
     })
   
   
