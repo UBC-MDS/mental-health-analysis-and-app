@@ -167,7 +167,7 @@ server <- function(input, output){
     p <- plot_ly(
       type = 'scatterpolar',
       mode = "markers",
-   #   fill = "toself",
+      fill = "toself",
       alpha = 0.4,
       colors = "Paired") %>%
 
