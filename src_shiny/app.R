@@ -112,7 +112,7 @@ ui <- fluidPage(
                 mainPanel(
                     tabsetPanel(type = "tabs",
                                 tabPanel("Plot", plotlyOutput("scatterpolar")),
-                                tabPanel("Read Me", br(),includeMarkdown("readme.md"))
+                                tabPanel("Read Me", br(),includeMarkdown("app_read_me.md"))
                     )
 
                 )
