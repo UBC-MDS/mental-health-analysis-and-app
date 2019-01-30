@@ -13,7 +13,7 @@ The tech sector is built on bright minds developing new solutions to create soci
 The source of the dataset is available publicly on [kaggle](https://www.kaggle.com/osmi/mental-health-in-tech-survey). This dataset is from a 2014 survey that measures attitudes towards mental health and frequency of mental health disorders in the tech workplace. 
 We will be visualizing this survey results for over 1,200 employees all over the world and primarily in the technology industry. This data is predominantly categorical, includes 27 variables but can be grouped into three sections: employee backgrounds, attitudes towards mental health, and company benefits / tools. Each of these sections include several variables which we aim to visualize by use of a 2d bin plot and several filters to visualize the interactions. In addition we will derive overall ranking variables on specific groupings to better summarize the data and provide useful insights.
 
-The App
+### Shiny App
 [Deployed Shiny App](- https://my-data-science.shinyapps.io/src_shiny/) hosted on shinyapps.io
 
 ### Versions
@@ -27,10 +27,10 @@ The App
 
 
 
-####Links to feedback given to peers
+### Links to feedback given to peers
 
 | Feedback | Github Link |
 |---|---|
 | Group 1| [Feedback Link](https://github.com/UBC-MDS/CrimeVisualizer/issues/18) |
-| Group 2 | [Feedback Link](https://github.com/UBC-MDS/Wine_Visualization_and_Analysis_Phuntsok_Jessie/iss) |
+| Group 2 | [Feedback Link](https://github.com/UBC-MDS/Wine_Visualization_and_Analysis_Phuntsok_Jessie/issues/14) |
 

@@ -1,6 +1,3 @@
-### Mental Health Shiny Application
-
-
 #### Team Members | Github:
 * Fan Nie | [Jamienie](https://github.com/Jamienie?tab=repositories)
 * Aaron Quinton | [aaronquinton](https://github.com/aaronquinton)
