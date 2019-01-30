@@ -101,8 +101,25 @@ ui <- fluidPage(
                         #           verbatimTextOutput(outputId = "res1"),
                       
                        hr(),
-                      helpText("click the ? on the right top corner of the webpage for detailed explations of the plot")
-                              
+                      p("click the",span("?", style = "color:blue"),"on the right top corner of the webpage for detailed explations of the plot"),
+                      br(),
+                  p("1. mental health consequence: Do employees think that discussing a mental health issue with employer would have negative consequences?"),
+                  br(),
+
+                   p("2. physical health consequence: Do employees think that discussing a physical health issue with employer would have negative consequences?"),
+                    br(),
+                  p("3. Talk with coworkers: Would employee be willing to discuss a mental health issue with coworkers?"),
+                   br(), 
+                  p("4. Talk with supervisor: Would employee be willing to discuss a mental health issue with direct supervisor(s)?"),
+                    br(),
+                  p("5. Discuss Mental Health at Interview: Would employee bring up a mental health issue with a potential employer in an interview?"),
+                    br(),
+                    p("6. Discuss Physical Health at Interview:Would employee bring up a physical health issue with a potential employer in an interview?"),
+                   br(), 
+                  p("7. Mental vs Physical Health: Do you feel that employer takes mental health as seriously as physical health?"),
+                   br(), 
+                  p("8. Observed consequences:Has employee heard of or observed negative consequences for coworkers with mental health conditions in your workplace?")
+                       
 
 
                    ),
@@ -138,7 +155,7 @@ server <- function(input, output){
     p <- plot_ly(
       type = 'scatterpolar',
       mode = "markers",
-      fill = "toself",
+   #   fill = "toself",
       alpha = 0.4,
       colors = "Blues"
       
@@ -156,7 +173,7 @@ server <- function(input, output){
       layout(
         polar = list(
           radialaxis = list(
-            visible = F,
+            visible = T,
             range = c(0,1)
           )
         )
